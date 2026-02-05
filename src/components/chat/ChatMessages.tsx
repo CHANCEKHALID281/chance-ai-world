@@ -1,0 +1,117 @@
+import { Sparkles, User, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
+
+type Message = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+};
+
+interface ChatMessagesProps {
+  messages: Message[];
+  isLoading: boolean;
+  messagesEndRef: React.RefObject<HTMLDivElement>;
+}
+
+const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps) => {
+  if (messages.length === 0 && !isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="text-center max-w-lg">
+          <div className="w-20 h-20 rounded-2xl gradient-hero flex items-center justify-center mx-auto mb-6 shadow-glow animate-float">
+            <Sparkles className="w-10 h-10 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-3">
+            Hello! I'm <span className="text-gradient">Chance AI</span>
+          </h2>
+          <p className="text-muted-foreground">
+            Ask me anything! I'm here to help you with questions, ideas, writing, coding, and more.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={cn(
+              "flex gap-4 animate-fade-in",
+              message.role === "user" ? "justify-end" : "justify-start"
+            )}
+          >
+            {message.role === "assistant" && (
+              <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+            )}
+
+            <div
+              className={cn(
+                "max-w-[80%] rounded-2xl px-4 py-3",
+                message.role === "user"
+                  ? "gradient-primary text-white"
+                  : "glass text-foreground"
+              )}
+            >
+              {message.role === "assistant" ? (
+                <div className="prose prose-invert prose-sm max-w-none">
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+                      li: ({ children }) => <li className="mb-1">{children}</li>,
+                      code: ({ children }) => (
+                        <code className="bg-background/50 px-1.5 py-0.5 rounded text-sm">
+                          {children}
+                        </code>
+                      ),
+                      pre: ({ children }) => (
+                        <pre className="bg-background/50 p-3 rounded-lg overflow-x-auto text-sm my-2">
+                          {children}
+                        </pre>
+                      ),
+                      strong: ({ children }) => (
+                        <strong className="font-semibold text-accent">{children}</strong>
+                      ),
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-sm">{message.content}</p>
+              )}
+            </div>
+
+            {message.role === "user" && (
+              <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-white" />
+              </div>
+            )}
+          </div>
+        ))}
+
+        {isLoading && messages[messages.length - 1]?.role === "user" && (
+          <div className="flex gap-4 justify-start animate-fade-in">
+            <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <div className="glass rounded-2xl px-4 py-3">
+              <Loader2 className="w-5 h-5 animate-spin text-primary" />
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+    </div>
+  );
+};
+
+export default ChatMessages;
