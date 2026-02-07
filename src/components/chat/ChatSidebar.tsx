@@ -1,6 +1,7 @@
-import { Plus, MessageSquare, Trash2, LogOut, ChevronLeft, Sparkles } from "lucide-react";
+import { Plus, MessageSquare, Trash2, LogOut, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import FishLogo from "@/components/ui/FishLogo";
 
 type Conversation = {
   id: string;
@@ -42,10 +43,10 @@ const ChatSidebar = ({
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
+              <FishLogo size="sm" className="text-primary-foreground" />
             </div>
-            <span className="font-semibold text-sidebar-foreground">Chance AI</span>
+            <span className="font-bold text-sidebar-foreground tracking-wide">NEEMO IB AI</span>
           </div>
           <Button
             variant="ghost"
@@ -59,7 +60,7 @@ const ChatSidebar = ({
 
         <Button
           onClick={onNewChat}
-          className="w-full gradient-primary text-white border-0 hover:opacity-90"
+          className="w-full bg-primary text-primary-foreground border-0 hover:bg-primary/90"
         >
           <Plus className="w-4 h-4 mr-2" />
           New Chat
@@ -106,7 +107,7 @@ const ChatSidebar = ({
       <div className="p-4 border-t border-sidebar-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-foreground text-sm font-medium flex-shrink-0">
               {userName.charAt(0).toUpperCase()}
             </div>
             <span className="text-sm text-sidebar-foreground truncate">{userName}</span>
