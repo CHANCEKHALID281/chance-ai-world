@@ -1,5 +1,6 @@
-import { Menu, Sparkles } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import FishLogo from "@/components/ui/FishLogo";
 
 interface ChatHeaderProps {
   sidebarOpen: boolean;
@@ -20,10 +21,10 @@ const ChatHeader = ({ sidebarOpen, onToggleSidebar }: ChatHeaderProps) => {
         </Button>
       )}
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg gradient-hero flex items-center justify-center">
-          <Sparkles className="w-3.5 h-3.5 text-white" />
+        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <FishLogo size="sm" className="text-primary-foreground" />
         </div>
-        <span className="font-semibold text-gradient">Chance AI</span>
+        <span className="font-bold text-foreground tracking-wide">NEEMO IB AI</span>
       </div>
     </header>
   );

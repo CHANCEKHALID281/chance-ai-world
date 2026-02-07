@@ -18,10 +18,10 @@ export default {
         display: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        chance: {
-          indigo: "hsl(240 70% 60%)",
-          coral: "hsl(15 85% 60%)",
-          dark: "hsl(230 25% 8%)",
+        neemo: {
+          black: "hsl(0 0% 4%)",
+          white: "hsl(0 0% 98%)",
+          gray: "hsl(0 0% 50%)",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
