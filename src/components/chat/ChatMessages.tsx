@@ -1,11 +1,13 @@
 import { Sparkles, User, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import fishLogo from "@/assets/fish-logo.png";
 
 type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
+  image_urls?: string[];
 };
 
 interface ChatMessagesProps {
@@ -19,14 +21,14 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center max-w-lg">
-          <div className="w-20 h-20 rounded-2xl gradient-hero flex items-center justify-center mx-auto mb-6 shadow-glow animate-float">
-            <Sparkles className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mx-auto mb-6 shadow-glow animate-float overflow-hidden">
+            <img src={fishLogo} alt="CHANCE OPEN MIND AI" className="w-16 h-16 object-contain" />
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-3">
-            Hello! I'm <span className="text-gradient">Chance AI</span>
+            Hello! I'm <span className="text-gradient">CHANCE OPEN MIND AI</span>
           </h2>
           <p className="text-muted-foreground">
-            Ask me anything! I'm here to help you with questions, ideas, writing, coding, and more.
+            Ask me anything! I'm here to help you with questions, ideas, writing, coding, and more. I can also generate images for you!
           </p>
         </div>
       </div>
@@ -45,8 +47,8 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
             )}
           >
             {message.role === "assistant" && (
-              <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img src={fishLogo} alt="AI" className="w-6 h-6 object-contain" />
               </div>
             )}
 
@@ -58,6 +60,20 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
                   : "glass text-foreground"
               )}
             >
+              {/* Display attached images */}
+              {message.image_urls && message.image_urls.length > 0 && (
+                <div className="flex gap-2 mb-2 flex-wrap">
+                  {message.image_urls.map((url, index) => (
+                    <img
+                      key={index}
+                      src={url}
+                      alt={`Attachment ${index + 1}`}
+                      className="max-w-full max-h-64 rounded-lg"
+                    />
+                  ))}
+                </div>
+              )}
+              
               {message.role === "assistant" ? (
                 <div className="prose prose-invert prose-sm max-w-none">
                   <ReactMarkdown
@@ -79,6 +95,9 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
                       strong: ({ children }) => (
                         <strong className="font-semibold text-accent">{children}</strong>
                       ),
+                      img: ({ src, alt }) => (
+                        <img src={src} alt={alt} className="max-w-full rounded-lg my-2" />
+                      ),
                     }}
                   >
                     {message.content}
@@ -99,8 +118,8 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
 
         {isLoading && messages[messages.length - 1]?.role === "user" && (
           <div className="flex gap-4 justify-start animate-fade-in">
-            <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <img src={fishLogo} alt="AI" className="w-6 h-6 object-contain" />
             </div>
             <div className="glass rounded-2xl px-4 py-3">
               <Loader2 className="w-5 h-5 animate-spin text-primary" />

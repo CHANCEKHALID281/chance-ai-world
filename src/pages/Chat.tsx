@@ -3,15 +3,25 @@ import { toast } from "@/hooks/use-toast";
 import ChatMessages from "@/components/chat/ChatMessages";
 import ChatInput from "@/components/chat/ChatInput";
 import ChatHeader from "@/components/chat/ChatHeader";
-
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-};
+import { useConversation, type Message } from "@/hooks/useConversation";
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const {
+    conversations,
+    currentConversation,
+    setCurrentConversation,
+    messages,
+    setMessages,
+    projects,
+    addMessage,
+    updateMessage,
+    searchMessages,
+    createProject,
+    deleteConversation,
+    clearChat,
+    createConversation,
+  } = useConversation();
+
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -20,18 +30,28 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (imageUrls?: string[]) => {
+    if (!input.trim() && (!imageUrls || imageUrls.length === 0)) return;
+    if (isLoading) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
       content: input,
+      image_urls: imageUrls,
     };
 
+    // Add to local state immediately for responsiveness
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+
+    // Save to database
+    await addMessage({
+      role: "user",
+      content: input,
+      image_urls: imageUrls,
+    });
 
     // Stream AI response
     let assistantContent = "";
@@ -94,11 +114,19 @@ const Chat = () => {
           }
         }
       }
+
+      // Save assistant message to database
+      if (assistantContent) {
+        await addMessage({
+          role: "assistant",
+          content: assistantContent,
+        });
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to get response from NEEMO IB AI",
+        description: error.message || "Failed to get response from CHANCE OPEN MIND AI",
       });
       setMessages(prev => prev.filter(m => m.id !== assistantId));
     } finally {
@@ -106,13 +134,38 @@ const Chat = () => {
     }
   };
 
-  const clearChat = () => {
-    setMessages([]);
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
+    const results = await searchMessages(query);
+    if (results && results.length > 0) {
+      toast({
+        title: `Found ${results.length} message(s)`,
+        description: "Showing search results",
+      });
+    }
+  };
+
+  const handleNewChat = () => {
+    clearChat();
+  };
+
+  const handleSelectConversation = (conv: any) => {
+    setCurrentConversation(conv);
   };
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <ChatHeader onClearChat={clearChat} />
+      <ChatHeader
+        onClearChat={handleNewChat}
+        onSearch={handleSearch}
+        projects={projects}
+        conversations={conversations}
+        currentConversationId={currentConversation?.id}
+        onCreateProject={createProject}
+        onSelectConversation={handleSelectConversation}
+        onDeleteConversation={deleteConversation}
+        onNewChat={handleNewChat}
+      />
 
       <ChatMessages
         messages={messages}
