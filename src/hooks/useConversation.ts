@@ -90,12 +90,16 @@ export function useConversation() {
     }
   };
 
-  const createConversation = async (title?: string, projectId?: string) => {
+  const createConversation = async (title?: string, projectId?: string, userId?: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
     const { data, error } = await supabase
       .from("chat_conversations")
       .insert({ 
         title: title || "New Chat", 
-        project_id: projectId || null 
+        project_id: projectId || null,
+        user_id: userId || user.id,
       })
       .select()
       .single();
@@ -201,9 +205,12 @@ export function useConversation() {
   };
 
   const createProject = async (name: string, description?: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
     const { data, error } = await supabase
       .from("projects")
-      .insert({ name, description })
+      .insert({ name, description, user_id: user.id })
       .select()
       .single();
 
