@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, imageUrl: editImageUrl, mode = "generate" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -23,7 +23,28 @@ serve(async (req) => {
       throw new Error("Prompt is required");
     }
 
-    console.log("Generating image for prompt:", prompt);
+    console.log(`${mode === "edit" ? "Editing" : "Generating"} image for prompt:`, prompt);
+
+    let messageContent: any;
+    
+    if (mode === "edit" && editImageUrl) {
+      // Edit mode: include the image to edit
+      messageContent = [
+        {
+          type: "text",
+          text: prompt,
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: editImageUrl,
+          },
+        },
+      ];
+    } else {
+      // Generate mode: just text prompt
+      messageContent = prompt;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -36,7 +57,7 @@ serve(async (req) => {
         messages: [
           {
             role: "user",
-            content: prompt,
+            content: messageContent,
           },
         ],
         modalities: ["image", "text"],
@@ -44,6 +65,18 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Service temporarily unavailable. Please try again later." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       const errorText = await response.text();
       console.error("Image generation error:", response.status, errorText);
       throw new Error("Failed to generate image");
@@ -68,7 +101,7 @@ serve(async (req) => {
       const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
       const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
       
-      const fileName = `generated-${Date.now()}.png`;
+      const fileName = `${mode === "edit" ? "edited" : "generated"}-${Date.now()}.png`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("chat-images")
         .upload(fileName, binaryData, {
