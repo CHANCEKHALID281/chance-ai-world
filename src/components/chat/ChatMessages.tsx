@@ -1,7 +1,7 @@
 import { User, Loader2, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
-import fishLogo from "@/assets/fish-logo.png";
+import chanceLogo from "@/assets/chance-logo.jfif";
 import CodeBlock from "./CodeBlock";
 
 type Message = {
@@ -24,7 +24,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center max-w-lg">
           <div className="w-24 h-24 rounded-2xl bg-background flex items-center justify-center mx-auto mb-6 shadow-glow animate-float overflow-hidden border border-border">
-            <img src={fishLogo} alt="CHANCE OPEN MIND AI" className="w-20 h-20 object-contain" />
+            <img src={chanceLogo} alt="CHANCE OPEN MIND AI" className="w-20 h-20 object-contain" />
           </div>
           <h2 className="text-3xl font-bold text-foreground mb-3">
             Hello! I'm <span className="text-gradient">CHANCE OPEN MIND AI</span>
@@ -50,7 +50,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
           >
             {message.role === "assistant" && (
               <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md border border-border">
-                <img src={fishLogo} alt="AI" className="w-8 h-8 object-contain" />
+                <img src={chanceLogo} alt="AI" className="w-8 h-8 object-contain" />
               </div>
             )}
 
@@ -151,7 +151,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
         {isLoading && messages[messages.length - 1]?.role === "user" && (
           <div className="flex gap-4 justify-start animate-fade-in">
             <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md border border-border">
-              <img src={fishLogo} alt="AI" className="w-8 h-8 object-contain" />
+              <img src={chanceLogo} alt="AI" className="w-8 h-8 object-contain" />
             </div>
             <div className="glass rounded-2xl px-5 py-4">
               <div className="flex items-center gap-2">
