@@ -1,4 +1,4 @@
-import { User, Loader2 } from "lucide-react";
+import { User, Loader2, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import fishLogo from "@/assets/fish-logo.png";
@@ -9,6 +9,7 @@ type Message = {
   role: "user" | "assistant";
   content: string;
   image_urls?: string[];
+  isThinking?: boolean;
 };
 
 interface ChatMessagesProps {
@@ -22,7 +23,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center max-w-lg">
-          <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center mx-auto mb-6 shadow-glow animate-float overflow-hidden">
+          <div className="w-24 h-24 rounded-2xl bg-background flex items-center justify-center mx-auto mb-6 shadow-glow animate-float overflow-hidden border border-border">
             <img src={fishLogo} alt="CHANCE OPEN MIND AI" className="w-20 h-20 object-contain" />
           </div>
           <h2 className="text-3xl font-bold text-foreground mb-3">
@@ -48,7 +49,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
             )}
           >
             {message.role === "assistant" && (
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md border border-border">
                 <img src={fishLogo} alt="AI" className="w-8 h-8 object-contain" />
               </div>
             )}
@@ -57,10 +58,18 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
               className={cn(
                 "max-w-[85%] rounded-2xl px-5 py-4",
                 message.role === "user"
-                  ? "gradient-primary text-white"
+                  ? "gradient-primary text-primary-foreground"
                   : "glass text-foreground"
               )}
             >
+              {/* Thinking indicator */}
+              {message.isThinking && (
+                <div className="flex items-center gap-2 mb-3 text-primary">
+                  <Brain className="w-4 h-4 animate-pulse" />
+                  <span className="text-sm font-medium">Deep thinking...</span>
+                </div>
+              )}
+
               {/* Display attached images */}
               {message.image_urls && message.image_urls.length > 0 && (
                 <div className="flex gap-2 mb-3 flex-wrap">
@@ -76,16 +85,16 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
               )}
               
               {message.role === "assistant" ? (
-                <div className="prose prose-lg dark:prose-invert max-w-none">
+                <div className="prose prose-lg dark:prose-invert max-w-none prose-p:text-foreground prose-li:text-foreground prose-headings:text-foreground prose-strong:text-primary prose-em:text-primary">
                   <ReactMarkdown
                     components={{
-                      p: ({ children }) => <p className="mb-3 last:mb-0 text-base leading-relaxed">{children}</p>,
+                      p: ({ children }) => <p className="mb-3 last:mb-0 text-lg leading-relaxed text-foreground">{children}</p>,
                       ul: ({ children }) => <ul className="list-disc pl-5 mb-3 space-y-1">{children}</ul>,
                       ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
-                      li: ({ children }) => <li className="text-base">{children}</li>,
-                      h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4">{children}</h1>,
-                      h2: ({ children }) => <h2 className="text-xl font-bold mb-2 mt-3">{children}</h2>,
-                      h3: ({ children }) => <h3 className="text-lg font-semibold mb-2 mt-2">{children}</h3>,
+                      li: ({ children }) => <li className="text-lg text-foreground">{children}</li>,
+                      h1: ({ children }) => <h1 className="text-3xl font-bold mb-3 mt-4 text-foreground">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-2xl font-bold mb-2 mt-3 text-foreground">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-xl font-semibold mb-2 mt-2 text-foreground">{children}</h3>,
                       code: ({ className, children }) => {
                         const match = /language-(\w+)/.exec(className || "");
                         const isInline = !match;
@@ -103,7 +112,7 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
                       },
                       pre: ({ children }) => <>{children}</>,
                       strong: ({ children }) => (
-                        <strong className="font-bold text-accent">{children}</strong>
+                        <strong className="font-bold text-primary">{children}</strong>
                       ),
                       em: ({ children }) => (
                         <em className="italic text-primary/90">{children}</em>
@@ -127,13 +136,13 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
                   </ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-base">{message.content}</p>
+                <p className="text-lg text-primary-foreground">{message.content}</p>
               )}
             </div>
 
             {message.role === "user" && (
               <div className="w-10 h-10 rounded-lg gradient-accent flex items-center justify-center flex-shrink-0 shadow-md">
-                <User className="w-5 h-5 text-white" />
+                <User className="w-5 h-5 text-primary-foreground" />
               </div>
             )}
           </div>
@@ -141,11 +150,14 @@ const ChatMessages = ({ messages, isLoading, messagesEndRef }: ChatMessagesProps
 
         {isLoading && messages[messages.length - 1]?.role === "user" && (
           <div className="flex gap-4 justify-start animate-fade-in">
-            <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md">
+            <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md border border-border">
               <img src={fishLogo} alt="AI" className="w-8 h-8 object-contain" />
             </div>
             <div className="glass rounded-2xl px-5 py-4">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 animate-pulse text-primary" />
+                <span className="text-sm text-muted-foreground">Thinking deeply...</span>
+              </div>
             </div>
           </div>
         )}

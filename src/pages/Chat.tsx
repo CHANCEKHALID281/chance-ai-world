@@ -41,19 +41,16 @@ const Chat = () => {
       image_urls: imageUrls,
     };
 
-    // Add to local state immediately for responsiveness
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
-    // Save to database
     await addMessage({
       role: "user",
       content: input,
       image_urls: imageUrls,
     });
 
-    // Stream AI response
     let assistantContent = "";
     const assistantId = crypto.randomUUID();
 
@@ -78,8 +75,8 @@ const Chat = () => {
       const decoder = new TextDecoder();
       let buffer = "";
 
-      // Add placeholder assistant message
-      setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "" }]);
+      // Add thinking placeholder
+      setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "", isThinking: true }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -105,7 +102,7 @@ const Chat = () => {
             if (content) {
               assistantContent += content;
               setMessages(prev =>
-                prev.map(m => (m.id === assistantId ? { ...m, content: assistantContent } : m))
+                prev.map(m => (m.id === assistantId ? { ...m, content: assistantContent, isThinking: false } : m))
               );
             }
           } catch {
@@ -115,7 +112,6 @@ const Chat = () => {
         }
       }
 
-      // Save assistant message to database
       if (assistantContent) {
         await addMessage({
           role: "assistant",
