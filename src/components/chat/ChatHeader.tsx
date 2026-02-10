@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchMessages } from "./SearchMessages";
 import { ProjectsSidebar } from "./ProjectsSidebar";
-import fishLogo from "@/assets/fish-logo.png";
+import chanceLogo from "@/assets/chance-logo.jfif";
 
 interface ChatHeaderProps {
   onClearChat: () => void;
@@ -43,7 +43,7 @@ const ChatHeader = ({
           />
         )}
         <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center overflow-hidden shadow-md border border-border">
-          <img src={fishLogo} alt="CHANCE OPEN MIND AI" className="w-8 h-8 object-contain" />
+          <img src={chanceLogo} alt="CHANCE OPEN MIND AI" className="w-8 h-8 object-contain" />
         </div>
         <span className="font-bold text-foreground tracking-wide text-xl hidden sm:block">CHANCE OPEN MIND AI</span>
       </div>
