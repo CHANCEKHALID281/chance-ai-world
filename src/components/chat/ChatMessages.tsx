@@ -1,7 +1,7 @@
 import { User, Loader2, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
-import chanceLogo from "@/assets/chance-logo.jfif";
+import chanceLogo from "@/assets/chance-logo.png";
 import CodeBlock from "./CodeBlock";
 
 type Message = {
