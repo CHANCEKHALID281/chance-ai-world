@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchMessages } from "./SearchMessages";
 import { ProjectsSidebar } from "./ProjectsSidebar";
-import chanceLogo from "@/assets/chance-logo.jfif";
+import chanceLogo from "@/assets/chance-logo.png";
 
 interface ChatHeaderProps {
   onClearChat: () => void;
